@@ -33,6 +33,12 @@ if __name__ == "__main__":
         help="Path to directory containing input dataset.",
         default="data/detection"
     )
+    '''
+    {DATA_PATH}
+        |-labels
+        |-images
+        |-val_images
+    '''
     parser.add_argument(
         '-o',
         '--out_path',
@@ -53,13 +59,6 @@ if __name__ == "__main__":
         type=int,
         help="Number of epochs to train",
         default=200
-    )
-    parser.add_argument(
-        '-vs',
-        '--validation_split',
-        type=float,
-        help="Ratio of training set to be used for validation.",
-        default=0.2
     )
 
     args = parser.parse_args()
