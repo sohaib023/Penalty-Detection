@@ -40,11 +40,6 @@ class MultiTaskModel(nn.Module):
     def forward(self, images, targets=None):
         if self.training and targets is None:
             raise Exception("seg_masks must not be NoneType while MultiTaskModel.training is True.")
-        original_image_sizes: List[Tuple[int, int]] = []
-        for img in images:
-            val = img.shape[-2:]
-            assert len(val) == 2
-            original_image_sizes.append((val[0], val[1]))
 
         seg_masks = [x['seg_mask'] for x in targets] if self.training and targets[0]['seg_mask'] is not None else None
         images, seg_masks, targets = self.transform(images, seg_masks, targets)
