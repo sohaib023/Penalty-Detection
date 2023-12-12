@@ -34,7 +34,7 @@ if __name__ == "__main__":
         default="data/detection"
     )
     '''
-    {DATA_PATH}
+    {INPUT_DATA_PATH}
         |-labels
         |-images
         |-val_images
