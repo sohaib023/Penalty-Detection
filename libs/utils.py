@@ -91,57 +91,6 @@ def remove_extra_goal_blobs(segmentation):
     # segmentation[segmentation.sum(axis=2) == 0] = [255, 0, 0]
     return segmentation
 
-# def goal_smoothing(segmentation):
-#     B = segmentation[:, :, 0]
-#     contours, hierarchy = cv2.findContours(B, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-
-#     mask = np.zeros(B.shape, np.uint8)
-
-#     areas = [cv2.contourArea(cnt) for cnt in contours]
-#     avg = sum(areas) / len(areas)
-#     contours = [cnt for cnt, area in zip(contours, areas) if area > avg *0.5]
-
-#     print(type(contours[0]))
-#     cnt = np.array([x for cnt in contours for x in cnt])
-#     print(type(cnt))
-#     perimeter = cv2.arcLength(cnt,True)
-#     epsilon = 0.01*cv2.arcLength(cnt,True)
-#     cv2.drawContours(mask, cnt, -1, 255, -1)
-#     approx = cv2.approxPolyDP(cnt,epsilon,True)
-
-#     mask = np.zeros(B.shape, np.uint8)
-#     cv2.drawContours(mask, cnt, -1, 255, 3)
-#     disp_img(mask, "cnt")
-#     mask = np.zeros(B.shape, np.uint8)
-#     cv2.drawContours(mask, [approx], -1, 255, 3)
-#     disp_img(mask, "approx")
-
-def find_referees(image, detections):
-    histograms = []
-    for det in detections:
-        b = det[0]
-        crop = image[b.y1:b.y2, b.x1:b.x2]
-        hist = cv2.calcHist([crop], [0, 1, 2], None, [12, 12, 12],
-            [0, 256, 0, 256, 0, 256])
-        hist = cv2.normalize(hist, hist).flatten()
-        histograms.append(hist)
-
-    correlation_map = [[0]* len(detections) for i in range(len(detections))]
-    max_corr = 0
-    indices = (-1, -1)
-    for i, hist in enumerate(histograms):
-        if detections[i][2] in ['player', 'referee']:
-            for j, hist2 in enumerate(histograms):
-                if i != j and detections[j][2] in ['player', 'referee']:
-                    correlation_map[i][j] = cv2.compareHist(hist, hist2, cv2.HISTCMP_CORREL)
-                    if max_corr < correlation_map[i][j]:
-                        max_corr = correlation_map[i][j]
-                        indices = (i, j)
-
-    # detections[indices[0]][2] = 'ref confirmed'
-    # detections[indices[1]][2] = 'ref confirmed'
-
-
 def timestep_processing(image, segmentation, detections):
     h, w = segmentation.shape[:2]
     segmentation = remove_extra_goal_blobs(segmentation)
